@@ -29,6 +29,7 @@ ground_truth = np.array([[0,1,0,0,0],
 
 
 def correlation_model (DATA, threshold):
+    # itseisarvot?!
     corr_matrix = pd.dataFrame(DATA).corr().values
     result = np.zeros((5,5))
     for i in range(5):
