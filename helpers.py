@@ -50,21 +50,56 @@ def result_to_df(array: np.array):
     return df
 
 
-def plot_result(df: pd.DataFrame):
-    """Plot the 5x5 gene dependency matrix."""
+def plot_result_directed(df: pd.DataFrame):
+    """Plot the 5x5 gene dependency matrix considering the directions."""
     fig = plt.figure(figsize=(5, 5))
     plt.matshow(df.values, fignum=fig.number)
-    plt.title('Dependency Matrix\n(yellow at place (i,j) = edge from gene i to gene j)', fontsize=12)
+    plt.title('Dependency Matrix, directed\n(yellow at place (i,j) = edge from gene i to gene j)', fontsize=12)
     genes = ['ASH1', 'CBF1', 'GAL4', 'GAL80', 'SWI5']
     plt.xticks(ticks=np.arange(0,5), labels=genes)
     plt.yticks(ticks=np.arange(0,5), labels=genes)
     return
 
 
-def calculate_rates(df_to_try: pd.DataFrame, df_true: pd.DataFrame):
+def plot_result_undirected(df: pd.DataFrame):
+    """Plot the 5x5 gene dependency matrix excluding the directions."""
+    df1 = df.values.copy()
+    for i in range(5):
+        for j in range(5):
+            if df1[i,j] == 1:
+                df1[j,i] = 1
+    fig = plt.figure(figsize=(5, 5))
+    plt.matshow(df1, fignum=fig.number)
+    plt.title('Dependency Matrix, undirected\n(yellow at place (i,j) = edge between genes i and j either way)', fontsize=12)
+    genes = ['ASH1', 'CBF1', 'GAL4', 'GAL80', 'SWI5']
+    plt.xticks(ticks=np.arange(0,5), labels=genes)
+    plt.yticks(ticks=np.arange(0,5), labels=genes)
+    return
+
+
+def calculate_rates_directed(df_to_try: pd.DataFrame, df_true: pd.DataFrame):
     """Calculate true positive and false positive rates."""
     df_to_try = df_to_try.values
     df_true = df_true.values
+    n_truth_pos = np.sum(df_true)
+    n_truth_neg = 25-n_truth_pos
+    true_positives = np.sum((df_to_try==1) & (df_true==1))
+    false_positives = np.sum((df_to_try==1) & (df_true==0))
+    tpr = true_positives/n_truth_pos
+    fpr = false_positives/n_truth_neg
+    return tpr, fpr
+
+
+def calculate_rates_undirected(df_to_try: pd.DataFrame, df_true: pd.DataFrame):
+    """Calculate true positive and false positive rates."""
+    df_to_try = df_to_try.values.copy()
+    df_true = df_true.values.copy()
+    for i in range(5):
+        for j in range(5):
+            if df_to_try[i,j] == 1:
+                df_to_try[j,i] = 1
+            if df_true[i,j] == 1:
+                df_true[j,i] = 1
     n_truth_pos = np.sum(df_true)
     n_truth_neg = 25-n_truth_pos
     true_positives = np.sum((df_to_try==1) & (df_true==1))
