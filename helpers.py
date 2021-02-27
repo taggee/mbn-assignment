@@ -107,4 +107,5 @@ def calculate_rates_undirected(df_to_try: pd.DataFrame, df_true: pd.DataFrame):
     tpr = true_positives/n_truth_pos
     fpr = false_positives/n_truth_neg
     return tpr, fpr
+
     
