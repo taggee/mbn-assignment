@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from itertools import combinations
-from .helpers import result_to_df, discretize
+from .helpers import result_to_df, discretize, calculate_rates_directed, calculate_rates_undirected
 
 
 def aracne_model(df: pd.DataFrame, discr_bins: int, threshold: float, remove=True):
@@ -66,3 +66,31 @@ def aracne_model(df: pd.DataFrame, discr_bins: int, threshold: float, remove=Tru
     for edge_loc in edges_to_remove:
         result[edge_loc] = 0
     return result_to_df(result)
+
+
+def aracne_model_roc_values(df_data: pd.DataFrame, df_truth: pd.DataFrame,
+                            threshold_min: float, threshold_max: float,
+                            bins_for_discretization: int, remove_edge_from_triplet: bool):
+    """Calculate tpr's and fpr's for ROC curve of the Aracne model."""    
+    
+    # initialize:
+    thresholds = np.linspace(threshold_min, threshold_max, 20)
+    tpr_dir = np.zeros(len(thresholds))
+    fpr_dir = np.zeros(len(thresholds))
+    tpr_undir = np.zeros(len(thresholds))
+    fpr_undir = np.zeros(len(thresholds))
+    
+    # calcluate directed and undirected tpr and fpr values:
+    for i, thres in enumerate(thresholds):
+        mat = aracne_model(df=df_data, discr_bins=bins_for_discretization,
+                           threshold=thres, remove=remove_edge_from_triplet)
+        tpr_dir[i], fpr_dir[i] = calculate_rates_directed(df_to_try=mat, df_true=df_truth)
+        tpr_undir[i], fpr_undir[i] = calculate_rates_undirected(df_to_try=mat, df_true=df_truth)
+
+    # return a text string and the directed and undirected tpr and fpr values:
+    if remove_edge_from_triplet:
+        string = 'Aracne model, \n data disretized into {:d} bins, \n thresholds {:.2f} to {:.2f}, edges removed normally'.format(bins_for_discretization, threshold_min, threshold_max)
+    else:
+        string = 'Aracne model, \n data disretized into {:d} bins, \n thresholds {:.2f} to {:.2f}, no edges removed'.format(bins_for_discretization, threshold_min, threshold_max)
+    return [string, tpr_dir, fpr_dir, tpr_undir, fpr_undir]
+

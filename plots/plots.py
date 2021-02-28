@@ -46,3 +46,29 @@ def plot_result_undirected(df: pd.DataFrame):
     plt.xticks(ticks=np.arange(0, 5), labels=genes)
     plt.yticks(ticks=np.arange(0, 5), labels=genes)
     return
+
+
+def plot_roc_curve(roc_values_list: list, directed: bool):
+    """Plot ROC curve of the respective calculated values of one or more models."""
+    leg_labels = []
+    plt.figure(figsize=(5,5))
+    if directed:
+        ind_fpr = 2
+        ind_tpr = 1
+        title = 'ROC curve for directed edges'
+    else:
+        ind_fpr = 4
+        ind_tpr = 3
+        title = 'ROC curve for undirected edges'
+    
+    for roc_value_list in roc_values_list:
+        plt.plot(roc_value_list[ind_fpr],roc_value_list[ind_tpr],"o-")
+        leg_labels.append(roc_value_list[0])
+    plt.xlim((0,1))
+    plt.ylim((0,1))
+    plt.title(title)
+    plt.xlabel('false positive rate')
+    plt.ylabel('true positive rate')
+    plt.legend(labels=leg_labels, loc='upper left',bbox_to_anchor=(1.02,1))
+    plt.show()
+    
