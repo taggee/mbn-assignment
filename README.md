@@ -4,10 +4,8 @@ Repository for CS-E5885 Modeling Biological Networks assignment project.
 
 ## Models
 
-The models are defined in models.py
-Antti's first trials in file antti_trial1.py
-
+The models are defined in `models/`
 
 ## How to run
 
-`python main.py`
+Run `main.ipynb` notebook cells in an Jupyter environment
