@@ -72,6 +72,7 @@ def greedy_hillclimbing(df: pd.DataFrame, iterations: int):
         edge_indexes.append(best_edge)
         model_scores.append(model_score)
         edge_network[best_edge[0], best_edge[1]] = 1
+        edge_network[best_edge[1], best_edge[0]] = 1
     return result_to_df(edge_network)
 
 
