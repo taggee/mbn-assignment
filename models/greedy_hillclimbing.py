@@ -105,4 +105,4 @@ def hillclimbing_model_roc_values(
 
     # return a text string and the directed and undirected tpr and fpr values
     string = f"Greedy hillclimbing model, \n number of added edges {iterations_min} to {iterations_max}"
-    return [string, tpr_dir, fpr_dir, tpr_undir, fpr_undir]
+    return [string, tpr_dir, fpr_dir, tpr_undir, fpr_undir, iters]

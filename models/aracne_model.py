@@ -92,5 +92,5 @@ def aracne_model_roc_values(df_data: pd.DataFrame, df_truth: pd.DataFrame,
         string = 'Aracne model, \n data disretized into {:d} bins, \n thresholds {:.2f} to {:.2f}, edges removed normally'.format(bins_for_discretization, threshold_min, threshold_max)
     else:
         string = 'Aracne model, \n data disretized into {:d} bins, \n thresholds {:.2f} to {:.2f}, no edges removed'.format(bins_for_discretization, threshold_min, threshold_max)
-    return [string, tpr_dir, fpr_dir, tpr_undir, fpr_undir]
+    return [string, tpr_dir, fpr_dir, tpr_undir, fpr_undir, thresholds]
 

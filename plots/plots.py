@@ -72,7 +72,7 @@ def plot_result_undirected(model_df: pd.DataFrame, ground_truth: pd.DataFrame):
     )
     cbar.ax.set_yticklabels(["True Positive", "False Positive", "Not found", "No edge"])
     ax.set_title(
-        "Dependency Matrix",
+        "Dependency Matrix, undirected edges",
         fontsize=12,
     )
     genes = ["", "ASH1", "CBF1", "GAL4", "GAL80", "SWI5"]
@@ -82,6 +82,18 @@ def plot_result_undirected(model_df: pd.DataFrame, ground_truth: pd.DataFrame):
 
 def plot_roc_curve(roc_values_list: list, directed: bool):
     """Plot ROC curve of the respective calculated values of one or more models."""
+    
+    def calc_auc(roc_value_list: list, ind_fpr: int, ind_tpr: int):
+        auc_value = 0
+        fpr_values = roc_value_list[ind_fpr]
+        tpr_values = roc_value_list[ind_tpr]
+        for i in range(len(fpr_values)-1):
+            auc_value += abs(fpr_values[i+1]-fpr_values[i])*0.5*(tpr_values[i+1]+tpr_values[i])
+        max_value = np.amax(tpr_values)
+        max_ind = np.argmax(tpr_values)
+        auc_value += (1-fpr_values[max_ind])*max_value
+        return auc_value
+        
     leg_labels = []
     plt.figure(figsize=(5, 5))
     if directed:
@@ -95,7 +107,13 @@ def plot_roc_curve(roc_values_list: list, directed: bool):
 
     for roc_value_list in roc_values_list:
         plt.plot(roc_value_list[ind_fpr], roc_value_list[ind_tpr], "o-")
-        leg_labels.append(roc_value_list[0])
+        auc_value = calc_auc(roc_value_list, ind_fpr, ind_tpr)
+        leg_labels.append(roc_value_list[0]+f'\n (AUC={auc_value:.2f})')
+        if len(roc_values_list)==1:
+            for i, thres in enumerate(roc_value_list[5]):
+                plt.annotate(str(round(thres,2)), 
+                             (roc_value_list[ind_fpr][i], roc_value_list[ind_tpr][i]),
+                             ha='left')
     plt.xlim((0, 1))
     plt.ylim((0, 1))
     plt.title(title)

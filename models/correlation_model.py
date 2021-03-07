@@ -34,4 +34,4 @@ def correlation_model_roc_values(df_data: pd.DataFrame, df_truth: pd.DataFrame,
 
     # return a text string and the directed and undirected tpr and fpr values:
     string = 'Correlation model, \n thresholds {:.2f} to {:.2f}'.format(threshold_min, threshold_max)
-    return [string, tpr_dir, fpr_dir, tpr_undir, fpr_undir]
+    return [string, tpr_dir, fpr_dir, tpr_undir, fpr_undir, thresholds]

@@ -5,7 +5,7 @@ from .helpers import result_to_df, calculate_rates_directed, calculate_rates_und
 
 
 def random_model(threshold=0.5, n_edges=0):
-    """No threshold is needed here."""
+    """No threshold is needed if n_edges is set."""
     result = np.zeros((5, 5))
     edge_locations = []
     for i in range(5):
@@ -59,4 +59,4 @@ def random_model_roc_values(df_truth: pd.DataFrame, threshold_min: float,
 
     # return a text string and the directed and undirected tpr and fpr values:
     string = 'Random model, \n thresholds {:.2f} to {:.2f}, {:d} repetitions each'.format(threshold_min, threshold_max, repetitions)
-    return [string, tpr_dir, fpr_dir, tpr_undir, fpr_undir]
+    return [string, tpr_dir, fpr_dir, tpr_undir, fpr_undir, thresholds]
