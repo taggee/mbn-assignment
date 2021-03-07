@@ -20,43 +20,29 @@ def plot_data(df: pd.DataFrame, discr: bool):
     return
 
 
-def make_result_mat(df1, df2):
-    for idx, _ in np.ndenumerate(df2):
-        if df2[idx] == 1:
-            df2[idx[1], idx[0]] = 1
+def make_result_mat(df1, df2, directed):
+    if not directed:
+        for idx, _ in np.ndenumerate(df2):
+            if df2[idx] == 1:
+                df2[idx[1], idx[0]] = 1
     result_mat = np.zeros(shape=(5, 5), dtype=int)
     result_mat[:] = 3
     for i in range(5):
         for j in range(5):
             if df1[i, j] == df2[i, j] and df1[i, j] == 1:
-                result_mat[j, i] = 0
                 result_mat[i, j] = 0
             elif df1[i, j] > df2[i, j]:
-                result_mat[j, i] = 1
                 result_mat[i, j] = 1
             elif df1[i, j] < df2[i, j]:
-                result_mat[j, i] = 2
                 result_mat[i, j] = 2
+            if not directed:
+                result_mat[j, i] = result_mat[i, j]
     return result_mat
 
 
-def plot_result_directed(df: pd.DataFrame):
-    """Plot the 5x5 gene dependency matrix considering the directions."""
-    fig = plt.figure(figsize=(5, 5))
-    plt.matshow(df.values, fignum=fig.number)
-    plt.title(
-        "Dependency Matrix, directed\n(yellow at place (i,j) = edge from gene i to gene j)",
-        fontsize=12,
-    )
-    genes = ["ASH1", "CBF1", "GAL4", "GAL80", "SWI5"]
-    plt.xticks(ticks=np.arange(0, 5), labels=genes)
-    plt.yticks(ticks=np.arange(0, 5), labels=genes)
-    return
-
-
-def plot_result_undirected(model_df: pd.DataFrame, ground_truth: pd.DataFrame):
+def plot_result_mat(model_df: pd.DataFrame, ground_truth: pd.DataFrame, directed=False):
     """Plot the 5x5 gene dependency matrix excluding the directions."""
-    result_mat = make_result_mat(model_df.values, ground_truth.values)
+    result_mat = make_result_mat(model_df.values, ground_truth.values, directed)
     fig, ax = plt.subplots(1, 1)
     cmap = plt.get_cmap("Accent", np.max(result_mat) - np.min(result_mat) + 1)
     # set limits .5 outside true range
